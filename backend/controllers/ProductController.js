@@ -1,7 +1,7 @@
 // Product Controller
 // This handles the business logic for product-related operations, including CRUD operations and data validation.
 
-const Product = require ('../models/Product');
+const Product = require ('../models/ProductModels');
 
 // @desc    Get all products
 // @route   GET /api/products
@@ -25,27 +25,29 @@ const getProducts = async (req, res, next) => {
             data: products      
         }); 
     } catch(error) {
-        res.status(500).json({ message: 'Internal server error while fetching products' });
+        next(error);
     }
 };
 
+// @desc    Get a single product by ID
+// @route   GET /api/products/:id
+// @access  Public
 const getProductById = async (req, res, next) => {
-  try {
-    const product = await Product.findById(req.params.id);
- 
-    if (!product) {
-      res.status(404);
-      return next(new Error("Product not found"));
+    try {
+        const product = await Product.findById(req.params.id);
+
+        if (!product) {
+            res.status(404);
+            return next(new Error('Product not found'));
+        }
+
+        res.status(200).json({
+            success: true,
+            data: product
+        });
+    } catch (error) {
+        next(error);
     }
- 
-    res.status(200).json({
-      success: true,
-      data: product,
-    });
-  } catch (error) {
-    // Handles invalid ObjectId format as well as other lookup errors
-    next(error);
-  }
 };
 
 // @desc    Create a new product
@@ -103,9 +105,8 @@ const updateProduct = async (req, res, next) => {
 // @desc    Delete a product
 // @route   DELETE /api/products/:id
 // @access  Private/Admin
-const deleteProduct = async (req, res) => {
-    try {
-        const product = await Product.findById(req.params.id);
+const deleteProduct = async (req, res, next) => {
+    try {const product = await Product.findById(req.params.id);
 
         if (!product) {
             res.status(404);
