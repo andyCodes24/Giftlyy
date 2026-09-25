@@ -23,10 +23,10 @@ export default function Products() {
     api
       .get("/products")
       .then((res) => {
-        if (Array.isArray(res) && res.length > 0) {
-          setProducts(res);
-        }
-      })
+  if (Array.isArray(res?.data) && res.data.length > 0) {
+    setProducts(res.data);
+  }
+})
       .catch(() => {
         /* keep fallbackProducts */
       });
