@@ -1,0 +1,235 @@
+:root {
+  --tap-size: 44px;
+}
+
+.nav-toggle {
+  display: none;
+}
+
+/* for laptop or monitor screens adjustments */
+
+@media (min-width: 1024px) {
+  .nav-link-button {
+    overflow: hidden;
+    max-width: 230px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+}
+/* For Phones and Tablets adjustments*/
+
+@media (max-width: 1023px) {
+  .navbar {
+    padding: 10px 20px;
+    gap: 0;
+  }
+
+  .nav-brand {
+    font-size: 1.45rem;
+  }
+
+  .nav-toggle {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    height: var(--tap-size);
+    width: var(--tap-size);
+    border: none;
+    margin-left: auto;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.4);
+    cursor: pointer;
+  }
+
+  .nav-toggle-bar {
+    display: block;
+    height: 2px;
+    width: 22px;
+    border-radius: 2px;
+    background: var(--primary-darker);
+    transform:
+      transform var (--transform),
+      opacity var(--transform);
+  }
+
+  .navbar-open .nav-toggle-bar:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+  }
+
+  .navbar-open .nav-toggle-bar:nth-child(2) {
+    opacity: 0;
+  }
+
+  .navbar-open .nav-toggle-bar:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+  }
+
+  .nav-links {
+    display: none;
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    padding: 8px 0;
+    gap: 2px;
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+
+  .navbar-open .nav-links {
+    display: flex;
+  }
+
+  .nav-links .nav-link {
+    display: flex;
+    font-size: 1em;
+    align-items: center;
+    min-height: var(--tap-size);
+    padding: 10px 12px;
+    border-bottom: none;
+    border-radius: 10px;
+  }
+
+  .nav-links .nav-link-active {
+    background: rgba(255, 255, 255, 0.5);
+  }
+
+  .nav-link-button {
+    text-align: left;
+    width: 100%;
+  }
+
+  .home-columns {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+
+  .hero {
+    padding: 80px 24px;
+  }
+
+  .qty-control {
+    padding: 4px 6px;
+    gap: 10px;
+  }
+
+  .qty-control button {
+    width: var(--tap-size);
+    height: var (--tap-size);
+    font-size: 1.25rem;
+  }
+
+  .btn-sm {
+    min-height: var(--tap-size);
+    padding: 10px 20px;
+  }
+
+  .filter-chip {
+    min-height: var(--tap-size);
+    padding: 80x 180x;
+  }
+
+  .budget-field input[type='range'] {
+    height: var(--tap-size);
+  }
+}
+
+/*Phones*/
+
+@media (max-width: 640px) {
+  .navbar {
+    padding: 10px 16px;
+  }
+
+  .page,
+  .page-narrow {
+    padding: 28px 16px 48px;
+  }
+
+  .page-title {
+    font-size: 1.6em;
+  }
+
+  .page-subtitle {
+    margin-bottom: 24px;
+  }
+
+  .hero {
+    padding: 56px 16px;
+  }
+
+  .hero-eyebrow {
+    font-size: 1.8em;
+  }
+
+  .hero-title {
+    font-size: 1.9em;
+  }
+
+  .hero-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .hero-columns {
+    gap: 32px;
+  }
+
+  .cta-banner {
+    padding: 40px 16px;
+  }
+
+  .card {
+    padding: 20px;
+  }
+
+  .step-card {
+    padding: 16px 18px;
+  }
+
+  .occasion-filters {
+    gap: 8px;
+    margin-bottom: 28;
+  }
+
+  .cart-total {
+    margin: 28px 0 16px;
+  }
+
+  .search-input {
+    margin-bottom: 20px;
+  }
+}
+
+@media (max-height: 500px) and (orientation: landscape) {
+  .navbar {
+    position: static;
+  }
+
+  .hero {
+    padding: 40px 24px;
+  }
+}
+
+@media (max-width: 640px) {
+  .hide-on-mobile {
+    display: none;
+  }
+
+  .full-width-on-mobile {
+    width: 100%;
+  }
+}
+
+@media (min-width: 641px) {
+  .show-on-mobile {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-toggle-bar {
+    transition: none;
+  }
+}

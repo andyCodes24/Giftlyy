@@ -1,0 +1,40 @@
+.cart-item {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.cart-item-occasion { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; }
+
+.qty-control {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  background: var(--surface-muted);
+  border-radius: 999px;
+  padding: 8px 20px;
+  width: fit-content;
+  margin: 0 auto 16px;
+}
+
+.qty-control button {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: none;
+  background: var(--primary);
+  color: var(--white);
+  font-size: 1.1rem;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.qty-control span { min-width: 20px; font-weight: 600; }
+
+.cart-total {
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  color: var(--primary-dark);
+  margin: 32px 0 20px;
+}

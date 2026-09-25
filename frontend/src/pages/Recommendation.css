@@ -1,0 +1,62 @@
+.occasion-filters {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 28px;
+}
+
+.filter-chip {
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1.5px solid var(--primary);
+  background: var(--surface);
+  color: var(--primary-dark);
+  font-weight: 500;
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition);
+}
+
+.filter-chip:hover { background: var(--accent-pink); }
+
+.filter-chip-active {
+  background: var(--primary-dark);
+  border-color: var(--primary-dark);
+  color: var(--white);
+}
+
+.budget-field {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.budget-field input[type="range"] {
+  flex: 1;
+  accent-color: var(--primary-dark);
+}
+
+.budget-value {
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: var(--primary-dark);
+  min-width: 60px;
+  text-align: right;
+}
+
+.recommendation-results { margin-top: 36px; }
+
+.selected-occasion {
+  text-align: center;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 20px;
+}
+
+.recommendation-card {
+  text-align: center;
+  margin-bottom: 18px;
+}
+
+.rec-occasion { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; }
+.rec-price { color: var(--primary-dark); font-weight: 500; margin-bottom: 16px; }
