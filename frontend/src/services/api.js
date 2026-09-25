@@ -1,5 +1,5 @@
-// Pointing to port 5000 as per your backend setup
-const BASE_URL = "http://localhost:5000/api";
+// Pointing to the live Render backend
+const BASE_URL = "https://giftlyy-1.onrender.com/api";
 
 // --- MILESTONE 3 LEGACY EXPORTS ---
 // Kept intact so older components do not break
