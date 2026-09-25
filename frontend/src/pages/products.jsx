@@ -13,20 +13,24 @@ export default function Products() {
   const [searchParams, setSearchParams] = useSearchParams();
   const activeOccasion = searchParams.get("occasion") || "";
   const [search, setSearch] = useState("");
-  const [products, setProducts] = useState(fallbackProducts);
+ const [products, setProducts] = useState([]);
   const [justAdded, setJustAdded] = useState(null);
   const { addToCart } = useCart();
 
   // Try the real API first; silently fall back to the local catalogue
-  // if the backend cannot be reached.
+  // (e.g. while the backend team is still wiring up GET /api/products).
   useEffect(() => {
     api
       .get("/products")
       .then((res) => {
-  if (Array.isArray(res?.data) && res.data.length > 0) {
-    setProducts(res.data);
-  }
-})
+        const list = Array.isArray(res?.data) ? res.data : res?.data?.data;
+        if (Array.isArray(list) && list.length > 0) {
+          // Mongo documents come back with `_id`, not `id`, and `occasion`
+          // is stored as an array. Normalize the id so add-to-cart and the
+          // cart can rely on it, and leave occasion as-is (handled below).
+          setProducts(list.map((p) => ({ ...p, id: p.id ?? p._id })));
+        }
+      })
       .catch(() => {
         /* keep fallbackProducts */
       });
@@ -35,12 +39,11 @@ export default function Products() {
   const filtered = useMemo(() => {
     return products.filter((p) => {
       const matchesOccasion =
-        !activeOccasion || p.occasion === activeOccasion;
-
-      const matchesSearch = p.name
-        .toLowerCase()
-        .includes(search.toLowerCase());
-
+        !activeOccasion ||
+        (Array.isArray(p.occasion)
+          ? p.occasion.includes(activeOccasion)
+          : p.occasion === activeOccasion);
+      const matchesSearch = p.name.toLowerCase().includes(search.toLowerCase());
       return matchesOccasion && matchesSearch;
     });
   }, [products, activeOccasion, search]);
