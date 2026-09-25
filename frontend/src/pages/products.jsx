@@ -18,12 +18,14 @@ export default function Products() {
   const { addToCart } = useCart();
 
   // Try the real API first; silently fall back to the local catalogue
-  // (e.g. while the backend team is still wiring up GET /api/products).
+  // if the backend cannot be reached.
   useEffect(() => {
     api
       .get("/products")
       .then((res) => {
-        if (Array.isArray(res?.data) && res.data.length > 0) setProducts(res.data);
+        if (Array.isArray(res) && res.length > 0) {
+          setProducts(res);
+        }
       })
       .catch(() => {
         /* keep fallbackProducts */
@@ -32,8 +34,13 @@ export default function Products() {
 
   const filtered = useMemo(() => {
     return products.filter((p) => {
-      const matchesOccasion = !activeOccasion || p.occasion === activeOccasion;
-      const matchesSearch = p.name.toLowerCase().includes(search.toLowerCase());
+      const matchesOccasion =
+        !activeOccasion || p.occasion === activeOccasion;
+
+      const matchesSearch = p.name
+        .toLowerCase()
+        .includes(search.toLowerCase());
+
       return matchesOccasion && matchesSearch;
     });
   }, [products, activeOccasion, search]);
@@ -44,19 +51,24 @@ export default function Products() {
     } else {
       searchParams.set("occasion", occasion);
     }
+
     setSearchParams(searchParams);
   };
 
   const handleAdd = (product) => {
     addToCart(product);
     setJustAdded(product.id);
+
     setTimeout(() => setJustAdded(null), 1200);
   };
 
   return (
     <div className="page">
       <h1 className="page-title">Our Gifts</h1>
-      <p className="page-subtitle">Browse the full collection, or filter by occasion below.</p>
+
+      <p className="page-subtitle">
+        Browse the full collection, or filter by occasion below.
+      </p>
 
       <input
         className="search-input"
@@ -71,7 +83,10 @@ export default function Products() {
         {OCCASIONS.map((occasion) => (
           <button
             key={occasion}
-            className={"filter-chip" + (occasion === activeOccasion ? " filter-chip-active" : "")}
+            className={
+              "filter-chip" +
+              (occasion === activeOccasion ? " filter-chip-active" : "")
+            }
             onClick={() => toggleOccasion(occasion)}
           >
             {occasion}
@@ -80,15 +95,27 @@ export default function Products() {
       </div>
 
       {filtered.length === 0 ? (
-        <p className="empty-state">No gifts match your search. Try a different term or occasion.</p>
+        <p className="empty-state">
+          No gifts match your search. Try a different term or occasion.
+        </p>
       ) : (
         <div className="card-grid product-grid">
           {filtered.map((product) => (
             <div className="card product-card" key={product.id}>
               <h3>{product.name}</h3>
-              <p className="product-occasion">{product.occasion}</p>
-              <p className="product-price">R{product.price}</p>
-              <button className="btn btn-primary btn-block" onClick={() => handleAdd(product)}>
+
+              <p className="product-occasion">
+                {product.occasion}
+              </p>
+
+              <p className="product-price">
+                R{product.price}
+              </p>
+
+              <button
+                className="btn btn-primary btn-block"
+                onClick={() => handleAdd(product)}
+              >
                 {justAdded === product.id ? "Added ✓" : "Add to cart"}
               </button>
             </div>
@@ -97,10 +124,15 @@ export default function Products() {
       )}
 
       <div className="products-footer">
-        <p>Can't find what you're looking for? Try our personalized gift recommendations.</p>
-        <Link to="/recommendation" className="btn btn-secondary">Get Recommendations</Link>
+        <p>
+          Can't find what you're looking for? Try our personalized gift
+          recommendations.
+        </p>
+
+        <Link to="/recommendation" className="btn btn-secondary">
+          Get Recommendations
+        </Link>
       </div>
     </div>
   );
-}
-
+};
