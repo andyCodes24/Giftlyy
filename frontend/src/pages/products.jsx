@@ -1,6 +1,7 @@
 // Import React hooks.
 // useState stores information that can change on the page.
 // useEffect allows us to run code when the page loads.
+// useMemo helps calculate the filtered products efficiently.
 
 import { useEffect, useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
@@ -11,43 +12,84 @@ import "./Products.css";
 
 export default function Products() {
   const [searchParams, setSearchParams] = useSearchParams();
+
+  // Get the selected occasion from the URL.
   const activeOccasion = searchParams.get("occasion") || "";
+
+  // Store the user's search text.
   const [search, setSearch] = useState("");
- const [products, setProducts] = useState([]);
+
+  // Start with an empty list so the old products do not flash
+  // before the real products are loaded from the API.
+  const [products, setProducts] = useState([]);
+
+  // Keep track of which product was just added to the cart.
   const [justAdded, setJustAdded] = useState(null);
+
+  // Keep track of whether the products are still loading.
+  const [loading, setLoading] = useState(true);
+
   const { addToCart } = useCart();
 
-  // Try the real API first; silently fall back to the local catalogue
-  // (e.g. while the backend team is still wiring up GET /api/products).
+  // Load products from the live API.
   useEffect(() => {
     api
       .get("/products")
       .then((res) => {
-        const list = Array.isArray(res?.data) ? res.data : res?.data?.data;
-        if (Array.isArray(list) && list.length > 0) {
-          // Mongo documents come back with `_id`, not `id`, and `occasion`
-          // is stored as an array. Normalize the id so add-to-cart and the
-          // cart can rely on it, and leave occasion as-is (handled below).
-          setProducts(list.map((p) => ({ ...p, id: p.id ?? p._id })));
+        // The API may return the products directly or
+        // inside a "data" property.
+        const list = Array.isArray(res)
+          ? res
+          : Array.isArray(res?.data)
+          ? res.data
+          : Array.isArray(res?.data?.data)
+          ? res.data.data
+          : [];
+
+        if (list.length > 0) {
+          // MongoDB uses "_id", while the frontend uses "id".
+          // Convert "_id" to "id" so the cart and buttons
+          // can identify each product correctly.
+          setProducts(
+            list.map((p) => ({
+              ...p,
+              id: p.id ?? p._id,
+            }))
+          );
         }
       })
-      .catch(() => {
-        /* keep fallbackProducts */
+      .catch((error) => {
+        console.error("Failed to load products:", error);
+
+        // If the API cannot be reached, use the local products
+        // as a fallback.
+        setProducts(fallbackProducts);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   }, []);
 
+  // Filter products based on the selected occasion and search text.
   const filtered = useMemo(() => {
     return products.filter((p) => {
+      // The backend stores occasion as an array,
+      // while the fallback products use a string.
       const matchesOccasion =
         !activeOccasion ||
         (Array.isArray(p.occasion)
           ? p.occasion.includes(activeOccasion)
           : p.occasion === activeOccasion);
-      const matchesSearch = p.name.toLowerCase().includes(search.toLowerCase());
+
+      const matchesSearch = p.name
+        .toLowerCase()
+        .includes(search.toLowerCase());
+
       return matchesOccasion && matchesSearch;
     });
   }, [products, activeOccasion, search]);
 
+  // Select or remove an occasion filter.
   const toggleOccasion = (occasion) => {
     if (occasion === activeOccasion) {
       searchParams.delete("occasion");
@@ -58,10 +100,14 @@ export default function Products() {
     setSearchParams(searchParams);
   };
 
+  // Add one product to the cart.
   const handleAdd = (product) => {
     addToCart(product);
+
+    // Only the clicked product will show "Added ✓".
     setJustAdded(product.id);
 
+    // Return the button to "Add to cart" after 1.2 seconds.
     setTimeout(() => setJustAdded(null), 1200);
   };
 
@@ -97,7 +143,9 @@ export default function Products() {
         ))}
       </div>
 
-      {filtered.length === 0 ? (
+      {loading ? (
+        <p className="empty-state">Loading gifts...</p>
+      ) : filtered.length === 0 ? (
         <p className="empty-state">
           No gifts match your search. Try a different term or occasion.
         </p>
@@ -108,12 +156,12 @@ export default function Products() {
               <h3>{product.name}</h3>
 
               <p className="product-occasion">
-                {product.occasion}
+                {Array.isArray(product.occasion)
+                  ? product.occasion.join(", ")
+                  : product.occasion}
               </p>
 
-              <p className="product-price">
-                R{product.price}
-              </p>
+              <p className="product-price">R{product.price}</p>
 
               <button
                 className="btn btn-primary btn-block"
@@ -138,4 +186,4 @@ export default function Products() {
       </div>
     </div>
   );
-};
+}
